@@ -178,7 +178,9 @@ int FiboProg_iterator::operator*() {
 }
 
 FiboProg_iterator &FiboProg_iterator::operator++() {
-    curr += prev + (prev - 1);
+    auto saveCurr = curr;
+    curr += prev ;
+    prev = saveCurr;
     return *this;
 }
 
