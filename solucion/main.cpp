@@ -1,55 +1,125 @@
-#include "Funciones.h"
-#include "Progression.h"
-#include "range.h"
-int main() {
-    std::cout << "Hello, World!" << std::endl;
-    const int n = 5;
-    int x = Fibonacci<n>::value;
-    std::cout << "Fibonacci de "<< n << ": " << x << std::endl;
+#include <iostream>
 
-    std::vector<int> v3(5);
-    generatePA<int> g ( 2, 2 );
-    std::generate( v3.begin(), v3.end(), g);
-    std::cout << "Progresion Aritmetica: ";
-    for (auto item1:v3){
-        std::cout << item1 << " ";
-    } std::cout << std::endl;
-
-    int sum2{0};
-    for (auto it2 = begin(v3); it2 != end(v3) ; it2++) {
-        sum2 += *it2;
-    } std::cout << "Suma de la progresion: "<< sum2 << std::endl;
+using namespace std;
 
 
-    for(auto i: range{10}){
-        std::cout << i << " ";
-    }std::cout << std::endl;
+class arith_iterator {
+	int curr;
+	int step;
+	friend class ArithProgression;
+	arith_iterator(int curr, int step):curr{curr}, step{step} {}
+	public:
+	bool operator==(const arith_iterator& other) const{
+		return curr==other.curr;
+	}
+	bool operator!=(const arith_iterator& other) const{
+		return curr<other.curr;
+	}
+	int& operator*(){
+		return curr;
+	}
+	arith_iterator& operator++(){
+		curr+=step;
+		return *this;
+	};
+	arith_iterator& operator++(int){
+		auto _curr=this;
+		++*this;
+		return *_curr;
+	}
+};
 
-    for(auto i: range{1,10}){
-        std::cout << i << " ";
-    }std::cout << std::endl;
+class geo_iterator {
+	int curr;
+	int step;
+	friend class GeomProgression;
+	geo_iterator(int curr, int step):curr{curr}, step{step} {}
+	public:
+	bool operator==(const geo_iterator& other) const{
+		return curr==other.curr;
+	}
+	bool operator!=(const geo_iterator& other) const{
+		return curr<other.curr;
+	}
+	int& operator*(){
+		return curr;
+	}
+	geo_iterator& operator++(){
+		curr=curr*step;
+		return *this;
+	}
 
-    for(auto i: range{1,10,2}){
-        std::cout << i << " ";
-    }std::cout << std::endl;
+	geo_iterator& operator++(int){
+		auto _curr=this;
+		++*this;
+		return *_curr;
+	}	
+};
+/*
+class Progression{
+	private:
+	long start;
+	long cur;
+	long stop;
+	public:
+	Progression();
+	long firstValue();
+	long nextValue();
+	void print(Progression(int));
+}
+*/
+class ArithProgression{
+	long inc;
+	long start;
+	long stop;
+	public:
+	ArithProgression(long _stop):inc(1),start(0),stop(_stop){};
+	ArithProgression(long _start,long _stop):inc(1),start(_start),stop(_stop){};
+	ArithProgression(long _inc,long _start,long _stop):inc(_inc),start(_start),stop(_stop){};
+	
+	using iterator=arith_iterator;
+	
+	iterator begin() const{
+		return ArithProgression::iterator(start,inc);
+	}
+	iterator end() const{
+		return ArithProgression::iterator(stop,inc);
+	}
+};
+class GeomProgression{
+	long base;
+	long start;
+	long stop;
+	public:
+	GeomProgression(long _stop):start(1),stop(_stop),base(2){};
+	GeomProgression(long _start,long _stop):base(2),start(_start),stop(_stop){};
+	GeomProgression(long _start,long _stop,long _base):base(_base),start(_start),stop(_stop){};
 
-    std::cout << "Progresion Aritmetica: ";
-    for (auto i: AritProg{4,20,4}) {
-        std::cout << i << " ";
-    }std::cout << std::endl;
+	using iterator = geo_iterator;
 
-    std::cout << "Progresion Geometrica: ";
-    for (auto i: GeoProg{2,16,4}) {
-        std::cout << i << " ";
-    }std::cout << std::endl;
+	iterator begin() const{
+		return GeomProgression::iterator(start,base);
+	}
+	iterator end() const{
+		return GeomProgression::iterator(stop,base);
+	}
+};
+/*
+FibonacciProgression{
+	long prev;
+	public:
+	FibonacciProgression();
+	FibonacciProgression( long,long);
+	long nextValue();
+}
+*/
 
-    std::cout << "Progresion Fibonacci: ";
-    for (auto i: FiboProg{2, 8, 1}) {
-        std::cout << i << " ";
-    }std::cout << std::endl;
-
-
-
-
-    return 0;
+int main(){
+	for (auto i: ArithProgression{10})
+		std::cout<<i<<",";
+	std::cout<<std::endl;
+	for (auto i: GeomProgression{2,100,4})
+		std::cout<<i<<",";
+	std::cout<<std::endl;
+	return 0;
 }
